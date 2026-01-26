@@ -1,0 +1,17 @@
+{
+    "name": "nodesol/apiguard",
+    "description": "API Guard for Laravel",
+    "autoload": {
+        "psr-4": {
+            "Nodesol\\Apiguard\\": "src/"
+        }
+    },
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Nodesol\\Apiguard\\ApiguardServicProvider"
+            ]
+        }
+    }
+}
