@@ -6,11 +6,13 @@
             "Nodesol\\Apiguard\\": "src/"
         }
     },
-    "require": {},
+    "require": {
+        "illuminate/contracts": "^10.0||^11.0||^12.0"
+    },
     "extra": {
         "laravel": {
             "providers": [
-                "Nodesol\\Apiguard\\ApiguardServicProvider"
+                "Nodesol\\Apiguard\\ApiguardServiceProvider"
             ]
         }
     }
