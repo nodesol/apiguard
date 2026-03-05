@@ -45,6 +45,7 @@ class ApiguardServiceProvider extends ServiceProvider
                 $user->exists = true;
                 return $user;
             } catch (\Exception $e) {
+                \Log::error("Authentication Failed", ['message' => $e->getMessage(), 'exception' => $e]);
                 return null;
             }
         });

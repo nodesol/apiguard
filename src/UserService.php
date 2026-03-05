@@ -26,6 +26,7 @@ class UserService {
         $result = $response->json();
         foreach(explode(".", config("apiguard.user_column", "")) as $key) {
             if(!isset($result[$key])) {
+                \Log::error('Auth API Request Failed', ['response' => $response->body()]);
                 throw new \Exception("Auth API returned an invalid response");
             }
             $result = $result[$key];
