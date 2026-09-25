@@ -2,10 +2,16 @@
 namespace Nodesol\Apiguard;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class UserService {
     public function getUser(): array
     {
+        $cached = $this->checkCache();
+        if($cached && is_array($cached) && count($cached) > 0) {
+            return $cached;
+        }
+
         $url = config("apiguard.api_url");
 
         $data = config("apiguard.post_data");
@@ -15,7 +21,6 @@ class UserService {
         foreach(config("apiguard.forwarded_headers") as $header) {
             $headers[$header] = request()->header($header);
         }
-        \Log::info($data);
         $response = Http::withHeaders($headers)->withBody($data, 'application/json')->post($url);
 
         if ($response->failed()) {
@@ -33,5 +38,27 @@ class UserService {
         }
 
         return $result;
+    }
+    
+    public function checkCache(): ?array {
+        $key = 'auth_token_'.$this->hashToken(request()->header("Authorization"));
+        $data = Cache::store(config("apiguard.cache_store"))->get($key);
+        if($data && isset($data["tokenable"])) {
+            return $data["tokenable"];
+        }
+        return null;
+    }
+
+    public function hashToken(string $token) : ?string
+    {
+        if (! is_string($token) || $token === '') {
+            return null;
+        }
+
+        if (str_contains($token, '|')) {
+            [, $token] = explode('|', $token, 2);
+        }
+
+        return hash('sha256', hash('sha256', $token));
     }
 }

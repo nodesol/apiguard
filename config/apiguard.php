@@ -6,5 +6,6 @@ return [
     "forwarded_headers" => explode(",", env("APIGUARD_HEADERS", "Authorization,X-COMPANY-ID")),
     "user_column" => env("APIGUARD_USER_COLUMN", ""),
     "user_model" => "\\App\\Models\\User",
-    "post_data" => env("APIGUARD_POSTDATA", json_encode([]))
+    "post_data" => env("APIGUARD_POSTDATA", json_encode([])),
+    "cache_store" => env("CACHE_AUTH_STORE"),
 ];
