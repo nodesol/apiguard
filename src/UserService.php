@@ -41,17 +41,37 @@ class UserService {
     }
     
     public function checkCache(): ?array {
-        $key = 'auth_token_'.$this->hashToken(request()->header("Authorization"));
-        $data = Cache::store(config("apiguard.cache_store"))->get($key);
-        if($data && isset($data["tokenable"])) {
-            return $data["tokenable"];
+        $key = $this->cacheKey();
+
+        if ($key === null) {
+            return null;
         }
-        return null;
+
+        $data = Cache::store(config('apiguard.cache_store'))->get($key);
+
+        if (! is_array($data) || ! isset($data['tokenable'])) {
+            return null;
+        }
+
+        return $data["tokenable"];
     }
 
-    public function hashToken(string $token) : ?string
+    protected function cacheKey(): ?string
+{
+        $hashedToken = $this->hashToken(request()->header('Authorization'));
+
+        if ($hashedToken === null) {
+            return null;
+        }
+
+        $teamId = request()->header('X-COMPANY-ID') ?: 'none';
+
+        return 'auth_token_'.$teamId.'_'.$hashedToken;
+    }
+
+    public function hashToken(?string $token) : ?string
     {
-        if (! is_string($token) || $token === '') {
+        if ($token === null || ! is_string($token) || $token === '') {
             return null;
         }
 
