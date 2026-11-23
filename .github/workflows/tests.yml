@@ -46,6 +46,8 @@ jobs:
 
       - name: Install dependencies
         run: |
+          # Laravel 11 is past security support; Composer blocks it by default. Allow it only for this CI leg.
+          if [[ "${{ matrix.laravel }}" == 11.* ]]; then composer config policy.advisories.block false; fi
           composer require "illuminate/support:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "pestphp/pest:${{ matrix.pest }}" --no-interaction --no-update
           composer update --prefer-dist --no-interaction --no-progress
 
